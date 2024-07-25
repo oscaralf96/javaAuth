@@ -6,6 +6,7 @@ import com.example.auth_service.common.entities.UserModel;
 import com.example.auth_service.repositories.UserRepository;
 import com.example.auth_service.services.AuthService;
 import com.example.auth_service.services.JwtService;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,6 +28,14 @@ public class AuthServiceImpl implements AuthService {
                 .map(userRepository::save)
                 .map(userCreated -> jwtService.generateToken(userCreated.getId()))
                 .orElseThrow(() -> new RuntimeException("Error creating user"));
+    }
+
+    @Override
+    public TokenResponse login(UserRequest userRequest) {
+        return  jwtService.generateToken(((UserModel) new UsernamePasswordAuthenticationToken(
+                        userRequest.getEmail(),userRequest.getPassword()
+                ).getPrincipal()).getId());
+
     }
 
     private UserModel mapToEntity(UserRequest userRequest) {

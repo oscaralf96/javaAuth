@@ -13,4 +13,6 @@ public interface AuthApi {
     ResponseEntity<TokenResponse> createUser(@RequestBody @Valid UserRequest userRequest);
     @GetMapping
     ResponseEntity<String> getUser(@RequestAttribute(name = "X-User-Id") String userId);
+    @PostMapping("/login")
+    public ResponseEntity<TokenResponse> login(@RequestBody UserRequest userRequest);
 }
