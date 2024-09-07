@@ -32,10 +32,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public TokenResponse login(UserRequest userRequest) {
-        return  jwtService.generateToken(((UserModel) new UsernamePasswordAuthenticationToken(
-                        userRequest.getEmail(),userRequest.getPassword()
-                ).getPrincipal()).getId());
-
+        return userRepository.findByEmail(userRequest.getEmail())
+                .filter(user -> user.getPassword().equals(userRequest.getPassword()))
+                .map(user -> jwtService.generateToken(user.getId()))
+                .orElseThrow(() -> new RuntimeException("Error login user"));
     }
 
     private UserModel mapToEntity(UserRequest userRequest) {
